@@ -12,6 +12,7 @@ namespace CarRentalsAPI.Models
         public DateTime Modified { get; set; }
 
         public string Formula { get; set; }
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
         public DateTime ValidFrom { get; set; }
         public DateTime ValidTo { get; set; }

@@ -15,6 +15,7 @@ namespace CarRentalsAPI.Models
         public string Model { get; set; }
         public DateTime ProductionDate { get; set; }
         public double EnginePower { get; set; }
+        public int CategoryId { get; set; }
         public Category Category { get; set; }
     }
 }
