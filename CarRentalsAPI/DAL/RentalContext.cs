@@ -4,10 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarRentalsAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace CarRentalsAPI.DAL
 {
-    public class RentalContext : DbContext
+    public class RentalContext : DbContext, IRentalContext
     {
         public DbSet<Rental> Rentals { get; set; }
         public DbSet<Customer> Customers { get; set; }
@@ -19,6 +20,16 @@ namespace CarRentalsAPI.DAL
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=CarRentals");
+        }
+
+        public EntityEntry<IEntity> Entry(IEntity entity)
+        {
+            return base.Entry(entity);
+        }
+
+        public void SaveChanges()
+        {
+            base.SaveChanges();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

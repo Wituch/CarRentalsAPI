@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CarRentalsAPI.Models
 {
-    interface IEntity
+    public interface IEntity
     {
         int Id { get; set; }
         DateTime Created { get; set; }
