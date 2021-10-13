@@ -49,7 +49,7 @@ namespace CarRentalsAPI.BusinessLogic
                 });
             }
 
-            var isCarAvailable = !_rentalsRepository.Query(r => r.CarId == requestData.CarId && r.Returned == DateTime.MinValue).Any();
+            var isCarAvailable = _carsRepository.GetById(requestData.CarId) != null && !_rentalsRepository.Query(r => r.CarId == requestData.CarId && r.Returned == DateTime.MinValue).Any();
 
             if (isCarAvailable)
             {
@@ -71,7 +71,7 @@ namespace CarRentalsAPI.BusinessLogic
 
             else
             {
-                return new RentalResponse { Message = "Car already rented", RentalNumber = string.Empty };
+                return new RentalResponse { Message = "Car already rented or not exists"};
             }
         }
 
@@ -85,35 +85,57 @@ namespace CarRentalsAPI.BusinessLogic
                 return new ReturnResponse { Message = "Rental for provided number not found or already finalized" };
             }
 
+            if (requestData.CarMileage < existingRental.CarMilageAtRent)
+            {
+                return new ReturnResponse { Message = "Car mileage at return cannot be lesser then at rental" };
+            }
+
             existingRental.CarMilageAtReturn = requestData.CarMileage;
             existingRental.Returned = requestData.Returned;
-            _rentalsRepository.Update(existingRental);
-
             var price = CalculatePrice(existingRental);
 
+            if (price == -1)
+            {
+                return new ReturnResponse { Message = "Cannot calculate rental price. Please check system configuration and try again" };
+            }
+
+            _rentalsRepository.Update(existingRental);
             return new ReturnResponse {Message = "Rental returned successfuly", Price = price };
         }
 
         private double CalculatePrice(Rental rental)
         {
             var priceFormula = _pricesRepository.Query(p => p.CategoryId == rental.Car.CategoryId
-            && p.ValidFrom <= rental.Returned && p.ValidTo >= rental.Returned).FirstOrDefault().Formula;
+            && p.ValidFrom <= rental.Returned && p.ValidTo >= rental.Returned).FirstOrDefault()?.Formula ?? string.Empty;
+
+            if (string.IsNullOrEmpty(priceFormula)) return -1;
+
             var formulaBuilder = new StringBuilder(priceFormula);
 
             var priceRates = _priceRatesRepository.Query(pr => pr.ValidFrom <= rental.Returned && pr.ValidTo >= rental.Returned).ToList();
-            foreach(var priceRate in priceRates)
+            foreach (var priceRate in priceRates)
             {
                 formulaBuilder.Replace(priceRate.Name, priceRate.Rate.ToString());
             }
 
             var properties = rental.GetType().GetProperties();
-            foreach(var property in properties.Where(p => p.PropertyType == typeof(int) || p.PropertyType == typeof(double)))
+            foreach (var property in properties.Where(p => p.PropertyType == typeof(int) || p.PropertyType == typeof(double)))
             {
                 var propertyValue = property.GetValue(rental, null)?.ToString() ?? string.Empty;
                 formulaBuilder.Replace(property.Name, propertyValue);
             }
 
-            var result = CSharpScript.EvaluateAsync<double>(formulaBuilder.ToString()).Result;
+            double result;
+            try
+            {
+                result = CSharpScript.EvaluateAsync<double>(formulaBuilder.ToString()).Result;
+            }
+
+            catch (Exception ex)
+            {
+                return - 1;
+            }
+
             return result;
         }
     }
