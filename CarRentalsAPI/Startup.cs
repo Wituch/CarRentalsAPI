@@ -13,6 +13,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Reflection;
+using System.IO;
+using Microsoft.OpenApi.Models;
 
 namespace CarRentalsAPI
 {
@@ -38,6 +41,21 @@ namespace CarRentalsAPI
             services.AddScoped<IRentalService, RentalService>();
 
             services.AddControllers();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Car Rentals API",
+                    Description = "API for car rentals created as part of recrutation process for Jetshop",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Wojciech Agaciñski",
+                        Email = "w.agacinski@onet.pl"
+                    }
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,6 +67,14 @@ namespace CarRentalsAPI
             }
 
             app.UseHttpsRedirection();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Car Rentals API V1");
+                c.RoutePrefix = string.Empty;
+            });
 
             app.UseRouting();
 
