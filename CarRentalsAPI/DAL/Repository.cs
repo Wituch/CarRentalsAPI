@@ -10,8 +10,8 @@ namespace CarRentalsAPI.DAL
 {
     public class Repository<TModel> : IRepository<TModel> where TModel : class, IEntity
     {
-        private readonly RentalContext _dbContext;
-        public Repository(RentalContext dbContext)
+        private readonly IRentalContext _dbContext;
+        public Repository(IRentalContext dbContext)
         {
             _dbContext = dbContext;
         }

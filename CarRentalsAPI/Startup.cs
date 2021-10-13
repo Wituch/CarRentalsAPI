@@ -1,3 +1,6 @@
+using CarRentalsAPI.BusinessLogic;
+using CarRentalsAPI.DAL;
+using CarRentalsAPI.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,6 +28,15 @@ namespace CarRentalsAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddScoped<IRentalContext, RentalContext>();
+            services.AddScoped<IRepository<Customer>, Repository<Customer>>();
+            services.AddScoped<IRepository<Car>, Repository<Car>>();
+            services.AddScoped<IRepository<Category>, Repository<Category>>();
+            services.AddScoped<IRepository<Price>, Repository<Price>>();
+            services.AddScoped<IRepository<PriceRate>, Repository<PriceRate>>();
+            services.AddScoped<IRepository<Rental>, Repository<Rental>>();
+            services.AddScoped<IRentalService, RentalService>();
+
             services.AddControllers();
         }
 
