@@ -18,11 +18,13 @@ namespace CarRentalsAPI.DAL
         public TModel Add(TModel model)
         {
             _dbContext.Set<TModel>().Add(model);
+            _dbContext.SaveChanges();
             return model;
         }
         public TModel Delete(TModel model)
         {
             _dbContext.Set<TModel>().Remove(model);
+            _dbContext.SaveChanges();
             return model;
         }
         public TModel GetById(int id)
@@ -40,6 +42,7 @@ namespace CarRentalsAPI.DAL
         public TModel Update(TModel model)
         {
             _dbContext.Entry(model).State = EntityState.Modified;
+            _dbContext.SaveChanges();
             return model;
         }
     }

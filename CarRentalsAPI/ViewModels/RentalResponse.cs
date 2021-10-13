@@ -7,5 +7,7 @@ namespace CarRentalsAPI.ViewModels
 {
     public class RentalResponse
     {
+        public string Message { get; set; }
+        public string RentalNumber { get; set; }
     }
 }

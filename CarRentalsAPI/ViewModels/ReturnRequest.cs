@@ -7,5 +7,8 @@ namespace CarRentalsAPI.ViewModels
 {
     public class ReturnRequest
     {
+        public string RentalNumber { get; set; }
+        public DateTime Returned { get; set; }
+        public int CarMilage { get; set; }
     }
 }

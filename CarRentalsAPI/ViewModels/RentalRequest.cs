@@ -7,5 +7,12 @@ namespace CarRentalsAPI.ViewModels
 {
     public class RentalRequest
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime BirthDate { get; set; }
+
+        public int CarId { get; set; }
+        public int CarMilage { get; set; }
+        public DateTime Rented { get; set; }
     }
 }

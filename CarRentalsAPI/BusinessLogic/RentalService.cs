@@ -31,7 +31,45 @@ namespace CarRentalsAPI.BusinessLogic
 
         public RentalResponse RequestRental(RentalRequest requestData)
         {
-            throw new NotImplementedException();
+            var existingCustomer = _customersRepository.Query(c => c.FirstName == requestData.FirstName && c.LastName == requestData.LastName &&
+            c.BirthDate == requestData.BirthDate).FirstOrDefault();
+
+            if (existingCustomer == null)
+            {
+                existingCustomer = _customersRepository.Add(new Customer
+                {
+                    FirstName = requestData.FirstName,
+                    LastName = requestData.LastName,
+                    BirthDate = requestData.BirthDate,
+                    Created = DateTime.Now,
+                    Modified = DateTime.Now
+                });
+            }
+
+            var isCarAvailable = !_rentalsRepository.Query(r => r.CarId == requestData.CarId && r.Returned == DateTime.MinValue).Any();
+
+            if (isCarAvailable)
+            {
+                var rental = new Rental
+                {
+                    Customer = existingCustomer,
+                    CarId = requestData.CarId,
+                    CarMilageAtRent = requestData.CarMilage,
+                    Number = Guid.NewGuid(),
+                    Rented = requestData.Rented,
+                    Created = DateTime.Now,
+                    Modified = DateTime.Now
+                };
+
+                _rentalsRepository.Add(rental);
+
+                return new RentalResponse { Message = "Rental created", RentalNumber = rental.Number.ToString()};
+            }
+
+            else
+            {
+                return new RentalResponse { Message = "Car already rented", RentalNumber = string.Empty };
+            }
         }
 
         public ReturnResponse RequestReturn(ReturnRequest requestData)
