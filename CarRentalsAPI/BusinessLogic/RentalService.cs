@@ -57,7 +57,7 @@ namespace CarRentalsAPI.BusinessLogic
                 {
                     Customer = existingCustomer,
                     CarId = requestData.CarId,
-                    CarMilageAtRent = requestData.CarMilage,
+                    CarMilageAtRent = requestData.CarMileage,
                     ReservationNumber = Guid.NewGuid(),
                     Rented = requestData.Rented,
                     Created = DateTime.Now,
@@ -85,7 +85,7 @@ namespace CarRentalsAPI.BusinessLogic
                 return new ReturnResponse { Message = "Rental for provided number not found or already finalized" };
             }
 
-            existingRental.CarMilageAtReturn = requestData.CarMilage;
+            existingRental.CarMilageAtReturn = requestData.CarMileage;
             existingRental.Returned = requestData.Returned;
             _rentalsRepository.Update(existingRental);
 

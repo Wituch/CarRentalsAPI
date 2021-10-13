@@ -12,7 +12,7 @@ namespace CarRentalsAPI.ViewModels
         public DateTime BirthDate { get; set; }
 
         public int CarId { get; set; }
-        public int CarMilage { get; set; }
+        public int CarMileage { get; set; }
         public DateTime Rented { get; set; }
     }
 }

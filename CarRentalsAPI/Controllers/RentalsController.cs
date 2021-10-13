@@ -1,5 +1,6 @@
 ﻿using CarRentalsAPI.BusinessLogic;
 using CarRentalsAPI.ViewModels;
+using CarRentalsAPI.ViewModels.Validators;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -25,14 +26,28 @@ namespace CarRentalsAPI.Controllers
         [Route("Rent")]
         public RentalResponse Rent([FromBody] RentalRequest request)
         {
-            return _rentalService.RequestRental(request);
+            var validator = new RentalRequestValidator();
+            var validationResult = validator.Validate(request);
+
+            if (validationResult.IsValid)
+            {
+                return _rentalService.RequestRental(request);
+            }
+            else return new RentalResponse { Message = validationResult.ToString(), RentalNumber = string.Empty };
         }
 
         [HttpPost]
         [Route("Return")]
         public ReturnResponse Return([FromBody] ReturnRequest request)
         {
-            return _rentalService.RequestReturn(request);
+            var validator = new ReturnRequestValidator();
+            var validationResult = validator.Validate(request);
+
+            if (validationResult.IsValid)
+            {
+                return _rentalService.RequestReturn(request);
+            }
+            else return new ReturnResponse { Message = validationResult.ToString(), Price = 0 };
         }
     }
 }

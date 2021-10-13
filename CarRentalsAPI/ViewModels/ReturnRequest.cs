@@ -9,6 +9,6 @@ namespace CarRentalsAPI.ViewModels
     {
         public string RentalNumber { get; set; }
         public DateTime Returned { get; set; }
-        public int CarMilage { get; set; }
+        public int CarMileage { get; set; }
     }
 }
