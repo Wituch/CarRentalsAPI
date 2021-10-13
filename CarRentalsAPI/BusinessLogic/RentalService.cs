@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalsAPI.BusinessLogic
 {
@@ -74,7 +75,27 @@ namespace CarRentalsAPI.BusinessLogic
 
         public ReturnResponse RequestReturn(ReturnRequest requestData)
         {
-            throw new NotImplementedException();
+            var existingRental = _rentalsRepository.Query(r => r.Number == Guid.Parse(requestData.RentalNumber) && r.Returned == DateTime.MinValue)
+                .Include(r => r.Car).FirstOrDefault();
+
+            if (existingRental == null)
+            {
+                return new ReturnResponse { Message = "Rental for provided number not found or already finalized" };
+            }
+
+            existingRental.CarMilageAtReturn = requestData.CarMilage;
+            existingRental.Returned = requestData.Returned;
+            _rentalsRepository.Update(existingRental);
+
+            var price = CalculatePrice(existingRental);
+
+            return new ReturnResponse {Message = "Rental returned successfuly", Price = price };
+        }
+
+        private double CalculatePrice(Rental rental)
+        {
+            //TODO Implement logic
+            return 100;
         }
     }
 }
