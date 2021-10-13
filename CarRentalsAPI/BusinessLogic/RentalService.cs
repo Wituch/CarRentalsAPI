@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using System.Text;
 
 namespace CarRentalsAPI.BusinessLogic
 {
@@ -56,7 +58,7 @@ namespace CarRentalsAPI.BusinessLogic
                     Customer = existingCustomer,
                     CarId = requestData.CarId,
                     CarMilageAtRent = requestData.CarMilage,
-                    Number = Guid.NewGuid(),
+                    ReservationNumber = Guid.NewGuid(),
                     Rented = requestData.Rented,
                     Created = DateTime.Now,
                     Modified = DateTime.Now
@@ -64,7 +66,7 @@ namespace CarRentalsAPI.BusinessLogic
 
                 _rentalsRepository.Add(rental);
 
-                return new RentalResponse { Message = "Rental created", RentalNumber = rental.Number.ToString()};
+                return new RentalResponse { Message = "Rental created", RentalNumber = rental.ReservationNumber.ToString()};
             }
 
             else
@@ -75,7 +77,7 @@ namespace CarRentalsAPI.BusinessLogic
 
         public ReturnResponse RequestReturn(ReturnRequest requestData)
         {
-            var existingRental = _rentalsRepository.Query(r => r.Number == Guid.Parse(requestData.RentalNumber) && r.Returned == DateTime.MinValue)
+            var existingRental = _rentalsRepository.Query(r => r.ReservationNumber == Guid.Parse(requestData.RentalNumber) && r.Returned == DateTime.MinValue)
                 .Include(r => r.Car).FirstOrDefault();
 
             if (existingRental == null)
@@ -94,8 +96,25 @@ namespace CarRentalsAPI.BusinessLogic
 
         private double CalculatePrice(Rental rental)
         {
-            //TODO Implement logic
-            return 100;
+            var priceFormula = _pricesRepository.Query(p => p.CategoryId == rental.Car.CategoryId
+            && p.ValidFrom <= rental.Returned && p.ValidTo >= rental.Returned).FirstOrDefault().Formula;
+            var formulaBuilder = new StringBuilder(priceFormula);
+
+            var priceRates = _priceRatesRepository.Query(pr => pr.ValidFrom <= rental.Returned && pr.ValidTo >= rental.Returned).ToList();
+            foreach(var priceRate in priceRates)
+            {
+                formulaBuilder.Replace(priceRate.Name, priceRate.Rate.ToString());
+            }
+
+            var properties = rental.GetType().GetProperties();
+            foreach(var property in properties.Where(p => p.PropertyType == typeof(int) || p.PropertyType == typeof(double)))
+            {
+                var propertyValue = property.GetValue(rental, null)?.ToString() ?? string.Empty;
+                formulaBuilder.Replace(property.Name, propertyValue);
+            }
+
+            var result = CSharpScript.EvaluateAsync<double>(formulaBuilder.ToString()).Result;
+            return result;
         }
     }
 }
