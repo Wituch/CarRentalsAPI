@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using System.Reflection;
 using System.IO;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRentalsAPI
 {
@@ -56,6 +57,9 @@ namespace CarRentalsAPI
                     }
                 });
             });
+
+            services.AddDbContext<RentalContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("RentalDatabase")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

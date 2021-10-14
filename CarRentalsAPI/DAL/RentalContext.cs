@@ -17,10 +17,10 @@ namespace CarRentalsAPI.DAL
         public DbSet<Price> Prices { get; set; }
         public DbSet<PriceRate> PriceRates { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public RentalContext(DbContextOptions<RentalContext> options)
+                : base(options)
         {
-            optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=CarRentals");
-        }
+        }        
 
         public EntityEntry<IEntity> Entry(IEntity entity)
         {
