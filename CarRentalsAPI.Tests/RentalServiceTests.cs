@@ -88,7 +88,6 @@ namespace CarRentalsAPI.Tests.Tests
 
         [Test]
         public void TryToRentNotExistingCarAsNewCustomer()
-
         {
             var rentalRepositoryMock = new Mock<IRepository<Rental>>();
             rentalRepositoryMock.Setup(m => m.Query(It.IsAny<Expression<Func<Rental, bool>>>()))
@@ -122,7 +121,7 @@ namespace CarRentalsAPI.Tests.Tests
                         Car = new Car {CategoryId = 1},
                         Rented = new DateTime(2021, 10, 13),
                         Returned = new DateTime(2021, 10, 15),
-                        CarMilageAtRent = 100000
+                        CarMileageAtRent = 100000
                     }
 
                 }.AsQueryable<Rental>());
@@ -261,7 +260,7 @@ namespace CarRentalsAPI.Tests.Tests
                         Car = new Car {CategoryId = 1},
                         Rented = new DateTime(2021, 10, 13),
                         Returned = new DateTime(2021, 10, 15),
-                        CarMilageAtRent = 100000
+                        CarMileageAtRent = 100000
                     }
 
                 }.AsQueryable<Rental>());
@@ -335,7 +334,7 @@ namespace CarRentalsAPI.Tests.Tests
                         Car = new Car {CategoryId = 1},
                         Rented = new DateTime(2021, 10, 13),
                         Returned = new DateTime(2021, 10, 15),
-                        CarMilageAtRent = 100000
+                        CarMileageAtRent = 100000
                     }
 
                 }.AsQueryable<Rental>());
@@ -392,7 +391,7 @@ namespace CarRentalsAPI.Tests.Tests
                         Car = new Car {CategoryId = 1},
                         Rented = new DateTime(2021, 10, 13),
                         Returned = new DateTime(2021, 10, 15),
-                        CarMilageAtRent = 100000
+                        CarMileageAtRent = 100000
                     }
 
                 }.AsQueryable<Rental>());

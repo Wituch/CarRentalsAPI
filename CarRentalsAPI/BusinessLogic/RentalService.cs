@@ -57,7 +57,7 @@ namespace CarRentalsAPI.BusinessLogic
                 {
                     Customer = existingCustomer,
                     CarId = requestData.CarId,
-                    CarMilageAtRent = requestData.CarMileage,
+                    CarMileageAtRent = requestData.CarMileage,
                     ReservationNumber = Guid.NewGuid(),
                     Rented = requestData.Rented,
                     Created = DateTime.Now,
@@ -85,12 +85,12 @@ namespace CarRentalsAPI.BusinessLogic
                 return new ReturnResponse { Message = "Rental for provided number not found or already finalized" };
             }
 
-            if (requestData.CarMileage < existingRental.CarMilageAtRent)
+            if (requestData.CarMileage < existingRental.CarMileageAtRent)
             {
                 return new ReturnResponse { Message = "Car mileage at return cannot be lesser then at rental" };
             }
 
-            existingRental.CarMilageAtReturn = requestData.CarMileage;
+            existingRental.CarMileageAtReturn = requestData.CarMileage;
             existingRental.Returned = requestData.Returned;
             var price = CalculatePrice(existingRental);
 

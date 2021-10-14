@@ -33,7 +33,7 @@ namespace CarRentalsAPI.Controllers
             {
                 return _rentalService.RequestRental(request);
             }
-            else return new RentalResponse { Message = validationResult.ToString(), RentalNumber = string.Empty };
+            else return new RentalResponse { Message = validationResult.ToString()};
         }
 
         [HttpPost]
@@ -47,7 +47,7 @@ namespace CarRentalsAPI.Controllers
             {
                 return _rentalService.RequestReturn(request);
             }
-            else return new ReturnResponse { Message = validationResult.ToString(), Price = 0 };
+            else return new ReturnResponse { Message = validationResult.ToString()};
         }
     }
 }

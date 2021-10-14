@@ -15,8 +15,8 @@ namespace CarRentalsAPI.Models
 
         public int CarId { get; set; }
         public Car Car { get; set; }
-        public int CarMilageAtRent { get; set; }
-        public int CarMilageAtReturn { get; set; }
+        public int CarMileageAtRent { get; set; }
+        public int CarMileageAtReturn { get; set; }
 
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
@@ -26,6 +26,6 @@ namespace CarRentalsAPI.Models
         [NotMapped]
         public int NumberOfDays { get => (Returned - Rented).Days; }
         [NotMapped]
-        public int NumberOfKilometers { get => CarMilageAtReturn - CarMilageAtRent; }
+        public int NumberOfKilometers { get => CarMileageAtReturn - CarMileageAtRent; }
     }
 }
